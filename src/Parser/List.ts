@@ -1,6 +1,14 @@
 import { load } from 'cheerio'
 import { IListResponse } from '../Types/List'
 
+function getVal(val : string) {
+    let multiplier = val.substr(-1).toLowerCase();
+    if (multiplier == "k")
+        return parseFloat(val) * 1000;
+    else if (multiplier == "m")
+        return parseFloat(val) * 1000000;
+}
+
 export const parseListResults = (data: string): IListResponse => {
     const $ = load(data)
     const mangaData: IListResponse['data'] = []
@@ -20,7 +28,7 @@ export const parseListResults = (data: string): IListResponse => {
         const name = detailsElement.attr('title') || ''
         const thumbnailSlug = detailsElement.find('.img-loading').attr('data-src')
         const thumbnail = `https://ww3.mangakakalot.tv${thumbnailSlug || '/static/images/404-avatar.png'}`
-        const views = Number($(el).find('.aye_icon').text().replace(/,/g, '').trim())
+        const views = Number(getVal($(el).find('.aye_icon').text().replace(/,/g, '').trim()))
         const summary = $(el).find('p').text().trim()
         mangaData.push({ name, id, views, thumbnail, summary, url })
     })

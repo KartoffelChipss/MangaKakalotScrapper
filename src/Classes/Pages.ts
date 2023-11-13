@@ -43,7 +43,7 @@ export class Pages {
     public async PDF(filename: string): Promise<string>
     public async PDF(filename?: string): Promise<Buffer | string> {
         const pdf = new PDFDocument({ autoFirstPage: false })
-        let file = filename
+        const file = filename
             ? `${filename}${filename.endsWith('.pdf') ? '' : '.pdf'}`
             : `${tmpdir()}/${Math.random().toString(36)}.pdf`
         const stream = createWriteStream(file)

@@ -2,6 +2,14 @@ import { load } from 'cheerio'
 import { Chapter } from '../Classes'
 import { genres, IMangaResponse, status as Status } from '../Types'
 
+function getVal(val : string) {
+    let multiplier = val.substr(-1).toLowerCase();
+    if (multiplier == "k")
+        return parseFloat(val) * 1000;
+    else if (multiplier == "m")
+        return parseFloat(val) * 1000000;
+}
+
 export const parseMangaInfo = (data: string): IMangaResponse => {
     const $ = load(data)
     const detailsElement = $('.manga-info-text').find('li')
@@ -30,7 +38,7 @@ export const parseMangaInfo = (data: string): IMangaResponse => {
                 .filter((x) => x !== '')[0]
         if (text.includes('Status')) status = text.replace('Status :', '') as Status
         if (text.includes('Last updated')) lastUpdated = text.replace('Last updated :', '').trim()
-        if (text.includes('View')) views = Number(text.replace('View : ', '').replace(/,/g, '').trim())
+        if (text.includes('View')) views = Number(getVal(text.replace('View : ', '').replace(/,/g, '').trim()))
         if (text.includes('Genres'))
             genres = text
                 .replace('Genres :', '')

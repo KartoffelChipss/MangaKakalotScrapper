@@ -2,6 +2,14 @@ import { load } from 'cheerio'
 import { Manga } from '../Classes'
 import { IMangaSearchResponse } from '../Types'
 
+function getVal(val : string) {
+    let multiplier = val.substr(-1).toLowerCase();
+    if (multiplier == "k")
+        return parseFloat(val) * 1000;
+    else if (multiplier == "m")
+        return parseFloat(val) * 1000000;
+}
+
 export const parseSearcResults = (data: string): IMangaSearchResponse => {
     const $ = load(data)
     const searchResults: Manga[] = []
@@ -28,7 +36,7 @@ export const parseSearcResults = (data: string): IMangaSearchResponse => {
             const text = $(el).text()
             if (text.includes('Author(s)')) author = text.replace('Author(s) : ', '').trim()
             if (text.includes('Updated')) lastUpdated = text.replace('Updated : ', '').trim()
-            if (text.includes('View')) views = Number(text.replace('View : ', '').replace(/,/g, '').trim())
+            if (text.includes('View')) views = Number(getVal(text.replace('View : ', '').replace(/,/g, '').trim()))
         })
         searchResults.push(
             new Manga(name, id, author, views, lastUpdated, thumbnail, `https://ww3.mangakakalot.tv${slug || '/'}`)
